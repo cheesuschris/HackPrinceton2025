@@ -37,8 +37,8 @@ def scrape_page(url):
 
 if __name__ == "__main__":
     # --- Temporary test section ---
-    brand = "Patagonia"
-    product = "Nano Puff Jacket"
+    brand = "Sweetcrispy"
+    product = "Ergonomic Office Desk Chair Mesh Adjustable Swivel Mid-Back Computer Chair with Lumbar Support Comfy Flip-up Arms for Home Office"
 
     # Build search query
     query = f"{brand} {product} sustainability OR carbon footprint OR materials OR environmental impact"
@@ -56,4 +56,9 @@ if __name__ == "__main__":
 
     print("\nScraping first page for text...\n")
     text = scrape_page(links[0])
+    text2 = scrape_page(links[1])
+    text3 = scrape_page(links[2])
+    
     print(text[:1000], "...\n")
+    #print(text2[:1000], "...\n")
+    print(text3, "...\n")
