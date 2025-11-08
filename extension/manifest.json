@@ -4,7 +4,9 @@
   "version": "1.0",
   "description": "Analyze product carbon footprint and find eco-friendly alternatives",
   "permissions": [
-    "activeTab"
+    "activeTab",
+    "tabs",
+    "scripting"
   ],
   "host_permissions": [
     "https://www.amazon.com/*",
@@ -14,6 +16,9 @@
     "https://www.target.com/*",
     "https://www.ebay.com/*",
     "http://localhost:5000/*",
+    "https://generativelanguage.googleapis.com/*",
+    "https://api.knotapi.com/*",
+    "https://cdn.knotapi.com/*",
     "https://*/*"
   ],
   "content_scripts": [
@@ -36,5 +41,11 @@
       "48": "icon.png",
       "128": "icon.png"
     }
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["landing.html"],
+      "matches": ["<all_urls>"]
+    }
+  ]
 }

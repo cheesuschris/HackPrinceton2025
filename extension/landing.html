@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carbon0 - Eco-Friendly Cart</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      overflow: hidden;
+    }
+    
+    .header {
+      background: #2e7d32;
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+    
+    .header h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+    
+    .header p {
+      opacity: 0.9;
+      font-size: 16px;
+    }
+    
+    .content {
+      padding: 30px;
+    }
+    
+    .cart-status {
+      background: #f1f8f4;
+      border-left: 4px solid #2e7d32;
+      padding: 15px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+    
+    .product-item {
+      background: #f9f9f9;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    
+    .product-image {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+    }
+    
+    .product-info {
+      flex: 1;
+    }
+    
+    .product-name {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 5px;
+    }
+    
+    .product-details {
+      color: #666;
+      font-size: 14px;
+      margin: 3px 0;
+    }
+    
+    .product-price {
+      font-size: 20px;
+      font-weight: 700;
+      color: #2e7d32;
+      margin-top: 10px;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+    }
+    
+    .error {
+      background: #ffebee;
+      color: #c62828;
+      padding: 15px;
+      border-radius: 6px;
+      margin: 20px 0;
+    }
+    
+    .success {
+      background: #e8f5e9;
+      color: #2e7d32;
+      padding: 15px;
+      border-radius: 6px;
+      margin: 20px 0;
+    }
+    
+    #cart-container {
+      min-height: 200px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🌱 Carbon0 Cart</h1>
+      <p>Your eco-friendly alternatives</p>
+    </div>
+    <div class="content">
+      <div class="cart-status" id="cart-status">
+        <strong>Loading cart...</strong>
+      </div>
+      <div id="cart-container">
+        <div class="loading">Initializing Knot cart...</div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="https://cdn.knotapi.com/sdk/v2/knot.js"></script>
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionId = urlParams.get('sessionId');
+    const productJson = urlParams.get('product');
+    
+    let product = null;
+    if (productJson) {
+      try {
+        product = JSON.parse(decodeURIComponent(productJson));
+      } catch (e) {
+        console.error('Failed to parse product:', e);
+      }
+    }
+    
+    const cartContainer = document.getElementById('cart-container');
+    const cartStatus = document.getElementById('cart-status');
+    
+    function updateStatus(message, isError = false) {
+      cartStatus.innerHTML = `<strong>${message}</strong>`;
+      cartStatus.style.background = isError ? '#ffebee' : '#f1f8f4';
+      cartStatus.style.borderLeftColor = isError ? '#c62828' : '#2e7d32';
+    }
+    
+    function displayProduct(product) {
+      cartContainer.innerHTML = `
+        <div class="product-item">
+          ${product.image ? `<img src="${product.image}" alt="${product.name}" class="product-image" onerror="this.style.display='none'">` : ''}
+          <div class="product-info">
+            <div class="product-name">${product.name || 'Product'}</div>
+            ${product.merchant ? `<div class="product-details"><strong>Merchant:</strong> ${product.merchant}</div>` : ''}
+            ${product.url ? `<div class="product-details"><strong>URL:</strong> <a href="${product.url}" target="_blank">View Product</a></div>` : ''}
+            ${product.price ? `<div class="product-price">${product.price}</div>` : ''}
+          </div>
+        </div>
+      `;
+    }
+    
+    if (!sessionId) {
+      updateStatus('Error: No session ID provided', true);
+      cartContainer.innerHTML = '<div class="error">Please add products from the Carbon0 extension.</div>';
+    } else if (!product) {
+      updateStatus('Error: No product data provided', true);
+      cartContainer.innerHTML = '<div class="error">Please add products from the Carbon0 extension.</div>';
+    } else {
+      updateStatus('Initializing Knot cart...');
+      displayProduct(product);
+      
+      if (typeof window.Knot === 'undefined') {
+        setTimeout(() => {
+          if (typeof window.Knot === 'undefined') {
+            updateStatus('Error: Knot SDK failed to load', true);
+            cartContainer.innerHTML += '<div class="error">Knot SDK could not be loaded. Please refresh the page.</div>';
+          } else {
+            initializeKnot();
+          }
+        }, 2000);
+      } else {
+        initializeKnot();
+      }
+    }
+    
+    function initializeKnot() {
+      try {
+        updateStatus('Adding product to Knot cart...');
+        
+        window.Knot.init({
+          sessionId: sessionId,
+          onSuccess: (data) => {
+            console.log('Knot initialized:', data);
+            updateStatus('Cart ready! Product added successfully.');
+            
+            if (window.Knot.addToCart) {
+              window.Knot.addToCart({
+                name: product.name,
+                price: product.price,
+                url: product.url,
+                image: product.image,
+                merchant: product.merchant
+              });
+            }
+          },
+          onError: (error) => {
+            console.error('Knot error:', error);
+            updateStatus('Error initializing Knot cart', true);
+            cartContainer.innerHTML += `<div class="error">Knot API error: ${error.message || 'Unknown error'}</div>`;
+          },
+          onExit: () => {
+            console.log('Knot exited');
+          }
+        });
+      } catch (error) {
+        console.error('Error initializing Knot:', error);
+        updateStatus('Error: ' + error.message, true);
+      }
+    }
+  </script>
+</body>
+</html>
+
