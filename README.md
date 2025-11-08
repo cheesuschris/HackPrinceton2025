@@ -11,7 +11,7 @@ This app is aimed to educate people on their spending habits and financial liter
 - User login and Registration
 - An AI-Powered smart recommendation system such that the grid's suggested recommendations (FOR THE USER'S THINGS TO BUY) will be based on users' purchase history and similar users' purchase history as input and a grid of items as an output. Uses Knot's API key (says "powered by Knot at the bottom")
 - Actually buys the items upon click of a button through Amazon API 
-- An Gemini-Powered RAG w/ user history
+- A Gemini-Powered RAG w/ user history
 
 ## Tech Stack
 MTRN + xAI
