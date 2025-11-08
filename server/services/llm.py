@@ -34,19 +34,30 @@ def call_llm(prompt: str, model: Optional[str] = None, temperature: float = 0.0,
 
     elif provider == "openai":
         try:
-            import openai
+            from openai import OpenAI
         except ImportError as e:
             raise ImportError("openai SDK not installed. Please add it to requirements.") from e
 
-        if OPENAI_API_KEY:
-            openai.api_key = OPENAI_API_KEY
+        if not OPENAI_API_KEY:
+            raise ValueError("OPENAI_API_KEY not found in environment variables")
 
+        # Use new OpenAI v1.0+ client
+        client = OpenAI(api_key=OPENAI_API_KEY)
         chosen_model = model or "gpt-4o"
-        # Use ChatCompletion for typical chat-style prompts. Adjust if using new SDK.
+        
+        # Use new chat completions API
         messages = [{"role": "user", "content": prompt}]
-        resp = openai.ChatCompletion.create(model=chosen_model, messages=messages, temperature=temperature, max_tokens=max_tokens, **kwargs)
-        if isinstance(resp, dict) and "choices" in resp and len(resp["choices"]) > 0:
-            return resp["choices"][0]["message"]["content"]
+        resp = client.chat.completions.create(
+            model=chosen_model,
+            messages=messages,
+            temperature=temperature,
+            max_tokens=max_tokens,
+            **kwargs
+        )
+        
+        # Extract response from new API structure
+        if resp.choices and len(resp.choices) > 0:
+            return resp.choices[0].message.content
         # Fallback: try attribute access or stringify
         return str(resp)
 
