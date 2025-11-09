@@ -4,7 +4,8 @@ from flask_cors import CORS
 import logging
 import os
 
-from routes.product import bp as product_bp
+from server.routes.product import bp as product_bp
+from server.database import init_db
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
 app.config['MONGO_URI'] = 'mongodb+srv://cheesus:Coolchris1@cluster0.ovfnl.mongodb.net/Carbon0_database?retryWrites=true&w=majority&appName=Cluster0'
@@ -131,5 +132,5 @@ def receive_product():
 
 if __name__ == '__main__':
     if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
-            init_db()
+        init_db()
     app.run(debug=True, host='0.0.0.0', port=5000)
