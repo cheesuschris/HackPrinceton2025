@@ -53,7 +53,8 @@ document.getElementById('readBtn').addEventListener('click', async () => {
       shippingFrom: geminiData.shippingFrom || null,
       fulfilledBy: null,
       availability: geminiData.availability || null,
-      brand: geminiData.brand || null
+      brand: geminiData.brand || null,
+      co2Score: 50
     };
 
     await handleProductData(productData, tab.url, true);
@@ -165,7 +166,8 @@ async function handleProductData(response, url, fromGemini = false) {
     shippingFrom: response.shipsFrom || response.shippingFrom || null,
     fulfilledBy: response.fulfilledBy || null,
     availability: response.availability || null,
-    brand: response.brand || null
+    brand: response.brand || null,
+    co2Score: 50
   };
 
   let html = '';
@@ -222,20 +224,35 @@ async function handleProductData(response, url, fromGemini = false) {
 async function showAlternatives(originalProduct) {
   const infoDiv = document.getElementById('productInfo');
   
+  const originalCO2 = originalProduct.co2Score || 50;
+  
   const alternatives = [
     {
       name: 'Eco-Friendly Alternative 1',
       price: '$24.99',
-      ecoScore: 95,
+      co2Score: 12,
+      co2Saved: originalCO2 - 12,
       merchant: 'EcoStore',
-      url: 'https://example.com/product1'
+      url: 'https://example.com/product1',
+      image: originalProduct.image
     },
     {
       name: 'Sustainable Option 2',
       price: '$29.99',
-      ecoScore: 88,
+      co2Score: 18,
+      co2Saved: originalCO2 - 18,
       merchant: 'GreenMarket',
-      url: 'https://example.com/product2'
+      url: 'https://example.com/product2',
+      image: originalProduct.image
+    },
+    {
+      name: 'Carbon-Neutral Choice 3',
+      price: '$27.50',
+      co2Score: 8,
+      co2Saved: originalCO2 - 8,
+      merchant: 'EarthFriendly',
+      url: 'https://example.com/product3',
+      image: originalProduct.image
     }
   ];
 
@@ -247,83 +264,85 @@ async function showAlternatives(originalProduct) {
       <div style="margin-top: 15px; padding: 12px; background: #f1f8f4; border-radius: 6px; border-left: 4px solid #2e7d32;">
         <div style="font-weight: bold; color: #333; margin-bottom: 5px;">${alt.name}</div>
         <div style="color: #666; font-size: 13px; margin: 3px 0;"><strong>Price:</strong> ${alt.price}</div>
-        <div style="color: #666; font-size: 13px; margin: 3px 0;"><strong>Eco Score:</strong> ${alt.ecoScore}/100</div>
+        <div style="color: #2e7d32; font-size: 13px; margin: 3px 0; font-weight: bold;"><strong>CO₂ Score:</strong> ${alt.co2Score} kg</div>
+        <div style="color: #4caf50; font-size: 13px; margin: 3px 0; font-weight: bold;"><strong>CO₂ Saved:</strong> ${alt.co2Saved} kg</div>
         <div style="color: #666; font-size: 13px; margin: 3px 0;"><strong>Merchant:</strong> ${alt.merchant}</div>
-        <button class="add-to-knot-btn" data-index="${index}" style="margin-top: 8px; background: #2e7d32; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; width: 100%; font-size: 14px;">Add to Knot Cart</button>
+        <button class="add-to-cart-btn" data-index="${index}" style="margin-top: 8px; background: #2e7d32; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; width: 100%; font-size: 14px;">Add to Carbon0 Cart</button>
       </div>
     `;
   });
   
   infoDiv.innerHTML = html;
   
-  document.querySelectorAll('.add-to-knot-btn').forEach(btn => {
+  document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
     btn.addEventListener('click', async (e) => {
       const index = parseInt(e.target.getAttribute('data-index'));
-      await addToKnotCart(alternatives[index], originalProduct);
+      await addToCarbon0Cart(alternatives[index], originalProduct);
     });
   });
+  
+  // Don't auto-open cart - let user decide when to view it
+  // User can click "Add to Carbon0 Cart" to open it
 }
 
-async function addToKnotCart(alternative, originalProduct) {
+async function addToCarbon0Cart(alternative, originalProduct) {
   const btn = event.target;
   btn.disabled = true;
-  btn.textContent = 'Opening cart...';
+  btn.textContent = 'Adding...';
   
   try {
-    const sessionResponse = await fetch(`${BACKEND_URL}/api/knot/session`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      }
-    });
-    
-    if (!sessionResponse.ok) {
-      const errorData = await sessionResponse.json().catch(() => ({}));
-      throw new Error(errorData.error || 'Failed to create Knot session');
-    }
-    
-    const sessionData = await sessionResponse.json();
-    const sessionId = sessionData.session_id;
-    
-    if (!sessionId) {
-      throw new Error('No session ID received from backend');
-    }
-    
-    console.log('Knot session created:', sessionId);
-    
-    const productData = {
-      sessionId: sessionId,
-      product: {
+    const cartData = {
+      alternative: {
         name: alternative.name,
         price: alternative.price,
         url: alternative.url,
+        image: alternative.image || originalProduct.image,
+        merchant: alternative.merchant,
+        co2Score: alternative.co2Score,
+        co2Saved: alternative.co2Saved
+      },
+      original: {
+        name: originalProduct.name,
+        price: originalProduct.price,
+        url: originalProduct.url,
         image: originalProduct.image,
-        merchant: alternative.merchant
+        platform: originalProduct.platform
       }
     };
     
-    const landingPageUrl = `${BACKEND_URL}/cart` + 
-      '?sessionId=' + encodeURIComponent(sessionId) +
-      '&product=' + encodeURIComponent(JSON.stringify(productData.product));
+    // Always use URL parameter method - more reliable
+    chrome.tabs.query({ url: `${BACKEND_URL}/cart*` }, (tabs) => {
+      if (tabs.length > 0) {
+        // Cart tab exists - update URL with product data
+        chrome.tabs.update(tabs[0].id, { 
+          url: `${BACKEND_URL}/cart?product=${encodeURIComponent(JSON.stringify(cartData))}`,
+          active: false  // Keep popup visible
+        });
+      } else {
+        // No cart tab - create one in background
+        chrome.tabs.create({ 
+          url: `${BACKEND_URL}/cart?product=${encodeURIComponent(JSON.stringify(cartData))}`,
+          active: false  // Open in background so popup stays visible
+        });
+      }
+    });
     
-    chrome.tabs.create({ url: landingPageUrl });
-    
-    btn.textContent = '✓ Opening Cart!';
+    btn.textContent = '✓ Added!';
     btn.style.background = '#4caf50';
     setTimeout(() => {
       btn.disabled = false;
-      btn.textContent = 'Add to Knot Cart';
+      btn.textContent = 'Add to Carbon0 Cart';
       btn.style.background = '#2e7d32';
     }, 2000);
     
   } catch (error) {
-    console.error('Knot cart error:', error);
-    btn.textContent = `✗ Error: ${error.message || 'Unknown error'}`;
+    console.error('Cart error:', error);
+    btn.textContent = `✗ Error`;
     btn.style.background = '#f44336';
     setTimeout(() => {
       btn.disabled = false;
-      btn.textContent = 'Add to Knot Cart';
+      btn.textContent = 'Add to Carbon0 Cart';
       btn.style.background = '#2e7d32';
-    }, 3000);
+    }, 2000);
   }
 }

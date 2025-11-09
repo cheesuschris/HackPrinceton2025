@@ -17,8 +17,6 @@
     "https://www.ebay.com/*",
     "http://localhost:5000/*",
     "https://generativelanguage.googleapis.com/*",
-    "https://api.knotapi.com/*",
-    "https://cdn.knotapi.com/*",
     "https://*/*"
   ],
   "content_scripts": [
@@ -32,6 +30,11 @@
         "https://www.ebay.com/*"
       ],
       "js": ["platforms.js", "content.js"]
+    },
+    {
+      "matches": ["http://localhost:5000/cart*"],
+      "js": ["cart-content.js"],
+      "run_at": "document_end"
     }
   ],
   "action": {
@@ -41,11 +44,5 @@
       "48": "icon.png",
       "128": "icon.png"
     }
-  },
-  "web_accessible_resources": [
-    {
-      "resources": ["landing.html"],
-      "matches": ["<all_urls>"]
-    }
-  ]
+  }
 }
