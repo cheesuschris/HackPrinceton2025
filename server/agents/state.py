@@ -1,15 +1,22 @@
-from typing import Annotated, Sequence, TypedDict, Dict, Any
-from langchain_core.messages import BaseMessage
-from langgraph.graph.message import add_messages
+from typing import TypedDict, Optional, List, Literal
 
-
-class CarbonState(TypedDict):
-    messages: Annotated[Sequence[BaseMessage], add_messages]
-    product_brand: str
-    product_name: str
-    carbon_input: Dict[str, Any]
-    search_attempts: int
-    complete: bool
-
-
-
+class ProductCO2State(TypedDict):
+    product_name: str                     
+    product_url: Optional[str]            
+    raw_description: Optional[str]        
+    materials: Optional[List[str]]        
+    weight_kg: Optional[float]           
+    manufacturing_location: Optional[str] 
+    shipping_distance_km: Optional[float] 
+    packaging_type: Optional[str]
+    co2_score: Optional[float]
+    data_sources: List[str]             
+    missing_fields: List[str]             
+    stage: Literal[
+        "init",          
+        "fetching",     
+        "ready_to_calculate", 
+        "calculating", 
+        "done"
+    ]
+    error: Optional[str]                  
