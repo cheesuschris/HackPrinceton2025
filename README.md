@@ -1,6 +1,14 @@
 ## Carbon0
 By Chris Wu, Safa Obuz, Ariji Chakma, Kaijie Lai
 
+![Python](https://img.shields.io/badge/Python-3.x-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![Flask](https://img.shields.io/badge/Flask-3.1.2-000000?style=for-the-badge&logo=flask&logoColor=white)
+![Chrome Extension](https://img.shields.io/badge/Chrome%20Extension-Manifest%20V3-4285F4?style=for-the-badge&logo=google-chrome&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-3-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
+![Google Gemini](https://img.shields.io/badge/Google%20Gemini-1.5%20Flash-4285F4?style=for-the-badge&logo=google&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
+
 ### Project Explanation
 Carbon0 is a browser extension that analyzes product carbon footprints and finds eco-friendly alternatives. The extension extracts product information from major e-commerce platforms and sends it to a Flask backend for carbon footprint analysis.
 
@@ -65,4 +73,4 @@ Receives product data in JSON format:
 ```
 
 ### Video Demonstration
-N/A yet
+[YouTube](https://www.youtube.com/watch?v=FiQ_lsqBNIk)
