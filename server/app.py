@@ -3,18 +3,29 @@ from flask_pymongo import PyMongo
 from flask_cors import CORS
 import logging
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from server.routes.product import bp as product_bp
 from server.database import init_db
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
-app.config['MONGO_URI'] = 'mongodb+srv://cheesus:Coolchris1@cluster0.ovfnl.mongodb.net/Carbon0_database?retryWrites=true&w=majority&appName=Cluster0'
-app.config['SECRET_KEY'] = os.urandom(16)
-mongo = PyMongo(app)
 
+MONGO_URI = os.getenv('MONGO_URI')
+app.config['MONGO_URI'] = MONGO_URI
+
+SECRET_KEY = os.getenv('SECRET_KEY')
+if not SECRET_KEY:
+    SECRET_KEY = os.urandom(16).hex()
+app.config['SECRET_KEY'] = SECRET_KEY
+
+DEBUG_MODE = os.environ.get('DEBUG', 'False').lower() == 'true'
+PORT = int(os.environ.get('PORT', 5000))
+
+mongo = PyMongo(app)
 CORS(app)
 
-# Register blueprints
 app.register_blueprint(product_bp)
 
 @app.route('/')
