@@ -27,7 +27,18 @@ def search_web(query, num_results=3):
 def scrape_page(url):
     """Extract readable text from a web page."""
     try:
-        html = requests.get(url, timeout=8).text
+        # Add headers to avoid compression issues
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Encoding': 'gzip, deflate',  # Don't request zstd
+            'Accept-Language': 'en-US,en;q=0.5',
+        }
+        response = requests.get(url, headers=headers, timeout=8)
+        response.raise_for_status()
+        
+        # Use response.text which handles encoding automatically
+        html = response.text
         soup = BeautifulSoup(html, "html.parser")
         text = " ".join(p.get_text() for p in soup.find_all("p"))
         return text[:8000]  # limit size for model input

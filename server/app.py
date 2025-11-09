@@ -1,7 +1,6 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import logging
-
 from routes.product import bp as product_bp
 
 app = Flask(__name__)
@@ -9,8 +8,6 @@ CORS(app)
 
 # Basic logging configuration for development
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
-
-
 # Register blueprints
 app.register_blueprint(product_bp)
 
