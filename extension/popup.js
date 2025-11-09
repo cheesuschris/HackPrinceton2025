@@ -187,10 +187,11 @@ async function handleProductData(response, url, fromGemini = false) {
 
   infoDiv.innerHTML = html;
 
-  document.getElementById('readBtn').textContent = 'Analyzing carbon footprint...';
+  document.getElementById('readBtn').textContent = 'Searching and analyzing...';
   
   try {
-    const apiResponse = await fetch(API_URL, {
+    // Call the new search endpoint
+    const apiResponse = await fetch(`${BACKEND_URL}/api/product/search`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -200,18 +201,63 @@ async function handleProductData(response, url, fromGemini = false) {
 
     if (apiResponse.ok) {
       const result = await apiResponse.json();
-      let bestScore = false;
-      if (apiResponse.C0Score < apiResponse.link1C0Score && apiResponse.C0Score < apiResponse.link2C0Score && apiResponse.C0Score < apiResponse.link3C0Score && apiResponse.C0Score < apiResponse.link4C0Score && apiResponse.C0Score < apiResponse.link5C0Score) {
-        bestScore = true;
+      
+      // Display search results
+      html += `<div class="success" style="font-weight: bold; font-size: 16px; margin-top: 15px; padding: 20px; background: #4caf50; color: white; border-radius: 5px;">`;
+      html += `<strong>Search Complete!</strong><br>`;
+      html += `Stage: ${result.state?.stage || 'unknown'}<br>`;
+      
+      if (result.state?.missing_fields && result.state.missing_fields.length > 0) {
+        html += `Missing fields: ${result.state.missing_fields.join(', ')}<br>`;
       }
-      if (bestScore) {
-        html += `<div class="success" style="font-weight: bold; font-size: 16px; margin-top: 15px; padding: 20px; background: #4caf50; color: white; border-radius: 5px;">Calculated C0 Score: ${apiResponse.C0Score}<br>Congrats, this was the best C0 score among similar products! Feel free to explore eco-friendly alternatives...</div>`;
+      
+      if (result.search_results?.gemini_analysis?.gemini_analysis?.success) {
+        html += `✓ Gemini analysis completed<br>`;
       }
-      html += `<div class="success" style="font-weight: bold; font-size: 16px; margin-top: 15px; padding: 20px; background: #4caf50; color: white; border-radius: 5px;">Calculated C0 Score: ${apiResponse.C0Score}<br>Check out these eco-friendly alternatives...</div>`;
+      
+      if (result.json_filepath) {
+        html += `✓ Results saved to JSON file<br>`;
+      }
+      
+      html += `</div>`;
+      
+      // Show Gemini analysis preview if available
+      if (result.search_results?.gemini_analysis?.gemini_analysis?.analysis) {
+        const analysis = result.search_results.gemini_analysis.gemini_analysis.analysis;
+        html += `<div style="margin-top: 15px; padding: 15px; background: #f1f8f4; border-radius: 6px; border-left: 4px solid #2e7d32;">`;
+        html += `<strong style="color: #2e7d32;">Product Analysis:</strong><br>`;
+        html += `<div style="margin-top: 10px; color: #333; font-size: 13px; max-height: 200px; overflow-y: auto;">`;
+        html += analysis.substring(0, 500) + (analysis.length > 500 ? '...' : '');
+        html += `</div></div>`;
+      }
+      
       infoDiv.innerHTML = html;
-      await showAlternatives(productData, apiResponse);
+      
+      // Log full result to console for debugging
+      console.log('Full search result:', result);
+      
+      // Still call the original endpoint for alternatives (if needed)
+      // You can modify this based on your needs
+      try {
+        const originalApiResponse = await fetch(API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(productData)
+        });
+        
+        if (originalApiResponse.ok) {
+          const originalResult = await originalApiResponse.json();
+          await showAlternatives(productData, originalResult);
+        }
+      } catch (altError) {
+        console.log('Alternatives endpoint not available:', altError);
+      }
+      
     } else {
-      html += `<div class="error" style="font-weight: bold; font-size: 16px; margin-top: 15px; padding: 20px; background: #f44336; color: white; border-radius: 5px;">Failed to send data. Status: ${apiResponse.status}</div>`;
+      const errorData = await apiResponse.json().catch(() => ({ error: 'Unknown error' }));
+      html += `<div class="error" style="font-weight: bold; font-size: 16px; margin-top: 15px; padding: 20px; background: #f44336; color: white; border-radius: 5px;">Failed to search product. Status: ${apiResponse.status}<br>Error: ${errorData.error || 'Unknown error'}</div>`;
       infoDiv.innerHTML = html;
     }
   } catch (error) {
