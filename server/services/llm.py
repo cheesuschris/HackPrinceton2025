@@ -26,7 +26,7 @@ def call_llm(prompt: str, model: Optional[str] = None, temperature: float = 0.0,
 
         # Instantiate client. Some google-genai SDKs accept an api_key argument.
         client = genai.Client(api_key=GOOGLE_API_KEY) if GOOGLE_API_KEY else genai.Client()
-        chosen_model = model or "gemini-1.0"
+        chosen_model = model or "gemini-2.5-flash"
         # Call the SDK - adapt to your installed SDK version if needed
         resp = client.models.generate_content(model=chosen_model, contents=prompt, **kwargs)
         # Common SDKs expose text on resp.text, but adapt if different
