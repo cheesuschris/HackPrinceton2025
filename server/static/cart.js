@@ -60,7 +60,11 @@ function removeFromCart(id) {
 
 function calculateStats() {
   const totalAlternatives = cartData.length;
-  const totalCO2Saved = cartData.reduce((sum, item) => sum + (item.alternative.co2Saved || 0), 0);
+  const totalCO2Saved = cartData.reduce((sum, item) => {
+    const originalScore = parseFloat(item.original?.C0Score) || 0;
+    const alternativeScore = parseFloat(item.alternative?.C0Score) || 0;
+    return sum + (originalScore - alternativeScore);
+  }, 0);
   document.getElementById('total-alternatives').textContent = totalAlternatives;
   document.getElementById('total-co2-saved').textContent = totalCO2Saved.toFixed(1) + ' kg';
 }
@@ -115,8 +119,8 @@ function renderCart() {
           <div class="product-info">
             <div class="product-details">
               ${alt.url ? `<div class="detail-item"><strong>URL:</strong> <a href="${alt.url}" target="_blank">View Product</a></div>` : ''}
-              ${alt.C0Score ? `<div class="detail-item"><strong>Price:</strong> ${alt.C0Score}</div>` : ''}
-              ${alt.explanation ? `<div class="detail-item"><strong>Merchant:</strong> ${alt.explanation}</div>` : ''}
+              ${alt.C0Score ? `<div class="detail-item"><strong>C0Score:</strong> ${alt.C0Score}</div>` : ''}
+              ${alt.explanation ? `<div class="detail-item"><strong>Explanation:</strong> ${alt.explanation}</div>` : ''}
             </div>
           </div>
           <button class="remove-btn" onclick="removeFromCart('${item.id}')">Remove</button>
@@ -157,7 +161,9 @@ function createConfetti() {
 
 async function finishCheckout() {
   const totalCO2Saved = cartData.reduce((sum, item) => {
-    return sum + (item.alternative.co2Saved || 0);
+    const originalScore = parseFloat(item.original?.C0Score) || 0;
+    const alternativeScore = parseFloat(item.alternative?.C0Score) || 0;
+    return sum + (originalScore - alternativeScore);
   }, 0);
   try {
     const response = await fetch('http://localhost:5000/cart/checkout', {
