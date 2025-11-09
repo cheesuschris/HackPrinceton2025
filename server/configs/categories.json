@@ -1,0 +1,38 @@
+{
+  "Food": [
+    "fresh_fruits",
+    "fresh_vegetables",
+    "snacks",
+    "beverages",
+    "dairy_products",
+    "meat_and_poultry",
+    "seafood",
+    "frozen_foods",
+    "grains_and_cereals",
+    "condiments_and_sauces"
+  ],
+  "Clothing": [
+    "tshirts",
+    "jackets_and_coats",
+    "pants_and_jeans",
+    "dresses_and_skirts",
+    "sweaters_and_hoodies",
+    "sportswear",
+    "underwear_and_lingerie",
+    "shoes_and_sneakers",
+    "bags_and_accessories",
+    "formal_wear"
+  ],
+  "Electronics": [
+    "smartphones",
+    "laptops_and_notebooks",
+    "tablets",
+    "headphones_and_earbuds",
+    "televisions",
+    "smartwatches",
+    "gaming_consoles",
+    "home_appliances",
+    "cameras_and_drones",
+    "computer_accessories"
+  ]
+}
