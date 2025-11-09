@@ -1,18 +1,38 @@
 {
-  "product_brand": "Sweetcrispy",
-  "product_name": "Ergonomic Office Desk Chair",
-  "carbon_data": {
-    "product_weight": {
-      "value": 0.6,
-      "source": "from extension"
+  "Sweetcrispy Ergonomic Office Desk Chair Mesh Adjustable Swivel": {
+    "query": "Sweetcrispy Ergonomic Office Desk Chair Mesh Adjustable Swivel",
+    "product_info": {
+      "Product name": "Sweetcrispy office chair",
+      "Brand": "Sweetcrispy",
+      "Price": null,
+      "Pros": [
+        "Ergonomic design with multiple adjustment points (seat height, armrests, tilt control, reclining mechanism)",
+        "Durable materials including mesh backs for breathability, padded leather or fabric seats for comfort, and a sturdy five-point base",
+        "Full 360-degree swivel and smooth-rolling casters",
+        "Offers lumbar support for better posture and reduced fatigue",
+        "Available in a variety of styles and designs (e.g., high-back, armless, sleek mesh, velvet finishes)",
+        "Designed for long hours of use",
+        "Free shipping on any purchase",
+        "Hassle-free and complimentary return policy",
+        "Secure payments"
+      ],
+      "Cons": [],
+      "Rating": null,
+      "Materials, manufacturing, packaging, transport info": {
+        "Materials": "Mesh backs, padded leather, fabric seats, sturdy five-point base, casters (suitable for hardwood vs. carpet)",
+        "Manufacturing": null,
+        "Packaging": null,
+        "Transport": "Free shipping on any purchase; currently shipping to United States."
+      },
+      "Sustainability metrics": {}
     },
-    "manufacturing_factor": "0.1",
-    "manufacturing_factor_source": "LLM estimation",
-    "transport": "50",
-    "transport_source": "LLM estimation",
-    "packaging": "2",
-    "packaging_source": "LLM estimation"
-  },
-  "last_updated": "2025-11-08T21:34:30.499812",
-  "completeness": 60.0
+    "sources": [
+      {
+        "url": "https://www.sweetcrispy.com/collections/office-chair-1?srsltid=AfmBOoo1XD-ULcMnuP0_Kmm7bJ6ZNGa0UfOibhVLQhju1SsFJ3ZpAXD-",
+        "timestamp": "2025-11-08T23:31:00.382270"
+      }
+    ],
+    "created_at": "2025-11-08T22:29:48.068023",
+    "last_updated": "2025-11-08T23:31:00.382285"
+  }
 }

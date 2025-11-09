@@ -1,0 +1,42 @@
+[
+  {
+    "timestamp": "2025-11-08T23:30:49.280968",
+    "step": "search_one_start",
+    "data": {
+      "query": "Sweetcrispy Ergonomic Office Desk Chair Mesh Adjustable Swivel"
+    }
+  },
+  {
+    "timestamp": "2025-11-08T23:30:50.005470",
+    "step": "search_one_links",
+    "data": {
+      "links": [
+        "https://www.sweetcrispy.com/collections/office-chair-1?srsltid=AfmBOoo1XD-ULcMnuP0_Kmm7bJ6ZNGa0UfOibhVLQhju1SsFJ3ZpAXD-"
+      ]
+    }
+  },
+  {
+    "timestamp": "2025-11-08T23:30:50.938313",
+    "step": "search_one_scrape_success",
+    "data": {
+      "url": "https://www.sweetcrispy.com/collections/office-chair-1?srsltid=AfmBOoo1XD-ULcMnuP0_Kmm7bJ6ZNGa0UfOibhVLQhju1SsFJ3ZpAXD-",
+      "length": 4816
+    }
+  },
+  {
+    "timestamp": "2025-11-08T23:31:00.378619",
+    "step": "extract_product_info_success",
+    "data": {
+      "url": "https://www.sweetcrispy.com/collections/office-chair-1?srsltid=AfmBOoo1XD-ULcMnuP0_Kmm7bJ6ZNGa0UfOibhVLQhju1SsFJ3ZpAXD-",
+      "result_length": 1148
+    }
+  },
+  {
+    "timestamp": "2025-11-08T23:31:00.383208",
+    "step": "save_product_to_json_success",
+    "data": {
+      "query": "Sweetcrispy Ergonomic Office Desk Chair Mesh Adjustable Swivel",
+      "sources_count": 1
+    }
+  }
+]
