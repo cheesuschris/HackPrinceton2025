@@ -109,11 +109,29 @@ def process_and_store_product(product_json: Dict[str, Any],
 
     try:
         # 1) Transform
+        print(f"\n{'='*80}")
+        print("STEP 1: TRANSFORM - Calling transform.transform_product")
+        print(f"{'='*80}")
+        print(f"Input product data:")
+        print(json.dumps(product_json, indent=2, ensure_ascii=False, default=str))
+        print(f"\nModel: {model}, Temperature: {transform_temperature}, Max Tokens: {max_tokens}")
+        print(f"{'='*80}\n")
+        
         out["messages"].append("Calling transform.transform_product")
         transformed = transform_module.transform_product(product_json, model=model, temperature=transform_temperature, max_tokens=max_tokens)
         out["transformed"] = transformed
+        
+        print(f"\n{'='*80}")
+        print("TRANSFORM RESULT:")
+        print(f"{'='*80}")
+        print(json.dumps(transformed, indent=2, ensure_ascii=False, default=str))
+        print(f"{'='*80}\n")
+        
     except Exception as exc:
         logger.exception("Transform step failed")
+        print(f"\n{'='*80}")
+        print(f"TRANSFORM ERROR: {exc}")
+        print(f"{'='*80}\n")
         out["status"] = "error"
         out["messages"].append(f"transform error: {exc}")
         return out

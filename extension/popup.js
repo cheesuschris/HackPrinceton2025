@@ -1,6 +1,115 @@
 const API_URL = 'http://localhost:5000/api/product';
 const BACKEND_URL = 'http://localhost:5000';
 
+// Storage keys
+const STORAGE_KEY_PRODUCT_DATA = 'carbon0_product_data';
+const STORAGE_KEY_ANALYSIS = 'carbon0_analysis';
+const STORAGE_KEY_FINAL_OUTPUT = 'carbon0_final_output';
+
+// Load and display stored data when popup opens
+async function loadStoredData() {
+  try {
+    const result = await chrome.storage.local.get([
+      STORAGE_KEY_PRODUCT_DATA,
+      STORAGE_KEY_ANALYSIS,
+      STORAGE_KEY_FINAL_OUTPUT
+    ]);
+    
+    if (result[STORAGE_KEY_PRODUCT_DATA] && result[STORAGE_KEY_ANALYSIS]) {
+      console.log('Loading stored data from chrome.storage');
+      await displayStoredResults(result[STORAGE_KEY_PRODUCT_DATA], result[STORAGE_KEY_ANALYSIS], result[STORAGE_KEY_FINAL_OUTPUT]);
+      return true;
+    }
+  } catch (error) {
+    console.error('Error loading stored data:', error);
+  }
+  return false;
+}
+
+// Save data to chrome.storage
+async function saveToStorage(productData, analysisData, finalOutputData) {
+  try {
+    await chrome.storage.local.set({
+      [STORAGE_KEY_PRODUCT_DATA]: productData,
+      [STORAGE_KEY_ANALYSIS]: analysisData,
+      [STORAGE_KEY_FINAL_OUTPUT]: finalOutputData
+    });
+    console.log('Data saved to chrome.storage');
+  } catch (error) {
+    console.error('Error saving to storage:', error);
+  }
+}
+
+// Clear stored data
+async function clearStoredData() {
+  try {
+    await chrome.storage.local.remove([
+      STORAGE_KEY_PRODUCT_DATA,
+      STORAGE_KEY_ANALYSIS,
+      STORAGE_KEY_FINAL_OUTPUT
+    ]);
+    console.log('Stored data cleared');
+  } catch (error) {
+    console.error('Error clearing storage:', error);
+  }
+}
+
+// Display stored results
+async function displayStoredResults(productData, analysisData, finalOutputData) {
+  const infoDiv = document.getElementById('productInfo');
+  
+  let html = '';
+  html += `<div class="header">Product Description:</div>`
+  html += `<div class="product-title">${productData.name || 'Unknown Product'}</div>`;
+  html += `<div class="product-detail"><strong>Platform:</strong> ${productData.platform || 'Unknown'}</div>`;
+  
+  if (productData.price) {
+    html += `<div class="product-detail"><strong>Price:</strong> ${productData.price}</div>`;
+  }
+  if (productData.rating) {
+    html += `<div class="product-detail"><strong>Rating:</strong> ${productData.rating}</div>`;
+  }
+  if (productData.seller) {
+    html += `<div class="product-detail"><strong>Sold By:</strong> ${productData.seller}</div>`;
+  }
+  if (productData.shippingFrom) {
+    html += `<div class="product-detail"><strong>Ships From:</strong> ${productData.shippingFrom}</div>`;
+  }
+  if (productData.image) {
+    html += `<div class="product-detail"><img src="${productData.image}" style="max-width: 100%; height: auto; margin-top: 10px; border-radius: 5px;" /></div>`;
+  }
+
+  // Display carbon score
+  const carbonScore = finalOutputData?.carbon_score || analysisData?.C0Score;
+  const displayScore = carbonScore !== undefined && carbonScore !== null ? carbonScore : 'N/A';
+  html += `<div class="success" style="font-weight: bold; font-size: 16px; margin-top: 15px; padding: 20px; background: #4caf50; color: white; border-radius: 5px;">Calculated C0 Score: ${displayScore}<br>Check out these eco-friendly alternatives...</div>`;
+
+  infoDiv.innerHTML = html;
+  
+  // Display alternatives
+  await showAlternatives(productData, analysisData);
+  
+  // Add a clear button
+  const clearBtn = document.createElement('button');
+  clearBtn.textContent = 'Clear Results & Analyze New Product';
+  clearBtn.style.marginTop = '10px';
+  clearBtn.style.background = '#f44336';
+  clearBtn.onclick = async () => {
+    await clearStoredData();
+    location.reload();
+  };
+  infoDiv.appendChild(clearBtn);
+}
+
+// Initialize: Try to load stored data when popup opens
+document.addEventListener('DOMContentLoaded', async () => {
+  const hasStoredData = await loadStoredData();
+  if (!hasStoredData) {
+    // Show default message if no stored data
+    document.getElementById('productInfo').innerHTML = '<div style="font-weight: bold; font-size: 20px; text-align: center;">Click on the button below to analyze this product\'s carbon footprint!</div>';
+  }
+});
+
 async function getGeminiKey() {
   try {
     const response = await fetch(`${BACKEND_URL}/api/config/gemini-key`);
@@ -17,6 +126,9 @@ async function getGeminiKey() {
 }
 
 document.getElementById('readBtn').addEventListener('click', async () => {
+  // Clear any existing stored data when starting a new analysis
+  await clearStoredData();
+  
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   
   document.getElementById('readBtn').disabled = true;
@@ -200,6 +312,65 @@ async function handleProductData(response, url, fromGemini = false) {
 
     if (apiResponse.ok) {
       const result = await apiResponse.json();
+      
+      // Debug: Log the full response
+      console.log('API Response received:', result);
+      
+      // Try to fetch final_output from JSON file if filepath is provided
+      let finalOutputData = null;
+      if (result.final_output_file) {
+        try {
+          // Extract filename from filepath (e.g., "final_output_20251109_071249.json")
+          const filename = result.final_output_file.split(/[/\\]/).pop();
+          console.log('Fetching final_output from file:', filename);
+          
+          const fileResponse = await fetch(`${BACKEND_URL}/api/final-output/${filename}`);
+          if (fileResponse.ok) {
+            finalOutputData = await fileResponse.json();
+            console.log('Loaded final_output from JSON file:', finalOutputData);
+          } else {
+            console.warn('Failed to fetch final_output file, using response data');
+          }
+        } catch (error) {
+          console.warn('Error fetching final_output file:', error);
+        }
+      }
+      
+      // Extract data from final_output structure (prefer JSON file, then response, then direct fields)
+      let carbonScore = result.C0Score;
+      let links = [];
+      
+      // Priority 1: Use data from JSON file if available
+      if (finalOutputData) {
+        carbonScore = finalOutputData.carbon_score;
+        links = finalOutputData.links || [];
+        console.log('Using data from final_output JSON file');
+      }
+      // Priority 2: Use final_output structure from response
+      else if (result.final_output) {
+        carbonScore = result.final_output.carbon_score;
+        links = result.final_output.links || [];
+        console.log('Using final_output from API response');
+      }
+      // Priority 3: Fallback to direct fields
+      else {
+        console.log('Using direct fields from API response');
+        for (let i = 1; i <= 5; i++) {
+          const link = result[`link${i}`];
+          if (link) {
+            links.push({
+              link: link,
+              image: result[`link${i}Image`] || '',
+              explanation: result[`link${i}Explanation`] || '',
+              c0_score: result[`link${i}C0Score`] || null
+            });
+          }
+        }
+      }
+      
+      console.log('Carbon Score:', carbonScore);
+      console.log('Links found:', links.length);
+      
       const parseScore = (value) => {
         if (typeof value === 'number') return value;
         if (typeof value === 'string') {
@@ -209,22 +380,52 @@ async function handleProductData(response, url, fromGemini = false) {
         return null;
       };
 
-      const productScore = parseScore(result.C0Score);
-      const alternativeScores = [1, 2, 3, 4, 5]
-        .map((idx) => parseScore(result[`link${idx}C0Score`]))
+      const productScore = parseScore(carbonScore);
+      const alternativeScores = links
+        .map((link) => parseScore(link.c0_score))
         .filter((score) => score !== null);
       const bestScore = productScore !== null &&
         alternativeScores.length > 0 &&
         alternativeScores.every((score) => productScore < score);
 
+      // Display C0Score - handle undefined/null properly
+      const displayScore = carbonScore !== undefined && carbonScore !== null ? carbonScore : 'N/A';
+      
       if (bestScore) {
-        html += `<div class="success" style="font-weight: bold; font-size: 16px; margin-top: 15px; padding: 20px; background: #4caf50; color: white; border-radius: 5px;">Calculated C0 Score: ${result.C0Score ?? 'N/A'}<br>Congrats, this was the best C0 score among similar products! Feel free to explore eco-friendly alternatives...</div>`;
+        html += `<div class="success" style="font-weight: bold; font-size: 16px; margin-top: 15px; padding: 20px; background: #4caf50; color: white; border-radius: 5px;">Calculated C0 Score: ${displayScore}<br>Congrats, this was the best C0 score among similar products! Feel free to explore eco-friendly alternatives...</div>`;
       } else {
-        html += `<div class="success" style="font-weight: bold; font-size: 16px; margin-top: 15px; padding: 20px; background: #4caf50; color: white; border-radius: 5px;">Calculated C0 Score: ${result.C0Score ?? 'N/A'}<br>Check out these eco-friendly alternatives...</div>`;
+        html += `<div class="success" style="font-weight: bold; font-size: 16px; margin-top: 15px; padding: 20px; background: #4caf50; color: white; border-radius: 5px;">Calculated C0 Score: ${displayScore}<br>Check out these eco-friendly alternatives...</div>`;
       }
 
       infoDiv.innerHTML = html;
-      await showAlternatives(productData, result);
+      
+      // Convert links array to the format showAlternatives expects
+      const alternativesData = {
+        C0Score: carbonScore
+      };
+      links.forEach((link, index) => {
+        const idx = index + 1;
+        alternativesData[`link${idx}`] = link.link;
+        alternativesData[`link${idx}Image`] = link.image;
+        alternativesData[`link${idx}Explanation`] = link.explanation;
+        alternativesData[`link${idx}C0Score`] = link.c0_score;
+      });
+      
+      await showAlternatives(productData, alternativesData);
+      
+      // Save to storage for persistence
+      await saveToStorage(productData, alternativesData, finalOutputData || result.final_output);
+      
+      // Add a clear button
+      const clearBtn = document.createElement('button');
+      clearBtn.textContent = 'Clear Results & Analyze New Product';
+      clearBtn.style.marginTop = '10px';
+      clearBtn.style.background = '#f44336';
+      clearBtn.onclick = async () => {
+        await clearStoredData();
+        location.reload();
+      };
+      infoDiv.appendChild(clearBtn);
     } else {
       html += `<div class="error" style="font-weight: bold; font-size: 16px; margin-top: 15px; padding: 20px; background: #f44336; color: white; border-radius: 5px;">Failed to send data. Status: ${apiResponse.status}</div>`;
       infoDiv.innerHTML = html;
@@ -242,19 +443,36 @@ async function showAlternatives(originalProduct, analysis) {
   const infoDiv = document.getElementById('productInfo');
   let html = infoDiv.innerHTML;
 
+  // Debug: Log what we're receiving
+  console.log('showAlternatives - analysis object:', analysis);
+  console.log('analysis.link1:', analysis.link1);
+  console.log('analysis.link1Image:', analysis.link1Image);
+  console.log('analysis.link1Explanation:', analysis.link1Explanation);
+
   const alternatives = [];
   for (let i = 1; i <= 5; i++) {
+    const linkKey = `link${i}`;
+    const imageKey = `link${i}Image`;
+    const explanationKey = `link${i}Explanation`;
+    const scoreKey = `link${i}C0Score`;
+    
     const alt = {
       index: i,
-      link: analysis[`link${i}`],
-      C0Score: analysis[`link${i}C0Score`],
-      explanation: analysis[`link${i}Explanation`],
-      image: analysis[`link${i}Image`]
+      link: analysis[linkKey] || '',
+      C0Score: analysis[scoreKey] || null,
+      explanation: analysis[explanationKey] || '',
+      image: analysis[imageKey] || ''
     };
-    if (alt.link) {
+    
+    console.log(`Alternative ${i}:`, alt);
+    
+    // Only add if we have at least a link
+    if (alt.link && alt.link.trim() !== '') {
       alternatives.push(alt);
     }
   }
+  
+  console.log(`Found ${alternatives.length} alternatives to display`);
 
   if (!alternatives.length) {
     infoDiv.innerHTML = `${html}<div class="error" style="font-weight: bold; font-size: 16px; margin-top: 15px; padding: 20px; background: #ffebee; color: #d32f2f; border-radius: 5px;">No eco-friendly alternatives were returned. Try another product or check the backend logs.</div>`;

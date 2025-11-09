@@ -96,49 +96,30 @@ def static_files(filename):
     """Serve static files"""
     return send_from_directory('static', filename)
 
-@app.route('/api/product', methods=['POST'])
-def receive_product():
-    """Receive product data from extension"""
+@app.route('/api/final-output/<filename>')
+def get_final_output(filename):
+    """Serve final_output JSON files"""
+    import json
+    import os
+    from flask import abort
+    
+    # Security: Only allow final_output_*.json files
+    if not filename.startswith('final_output_') or not filename.endswith('.json'):
+        abort(400, description="Invalid filename")
+    
+    # Construct file path
+    base_dir = os.path.dirname(__file__)
+    filepath = os.path.join(base_dir, filename)
+    
+    if not os.path.exists(filepath):
+        abort(404, description="File not found")
+    
     try:
-        data = request.get_json()
-        
-        if not data:
-            return jsonify({'error': 'No data provided'}), 400
-        
-        product_data = {
-            'platform': data.get('platform'),
-            'url': data.get('url'),
-            'image': data.get('image'),
-            'name': data.get('name'),
-            'price': data.get('price'),
-            'rating': data.get('rating'),
-            'shipper': data.get('shipper'),
-            'seller': data.get('seller'),
-            'reviews': data.get('reviews', []),
-            'shippingFrom': data.get('shippingFrom'),
-            'fulfilledBy': data.get('fulfilledBy'),
-            'availability': data.get('availability'),
-            'brand': data.get('brand')
-        }
-        
-        print(f"\n{'='*60}")
-        print(f"Received product data: {product_data['name']} from {product_data['platform']}")
-        print(f"{'='*60}")
-        import json
-        print(json.dumps(product_data, indent=2, ensure_ascii=False))
-        print(f"{'='*60}\n")
-        
-        return jsonify({
-            'message': 'Product data received successfully',
-            'data': product_data,
-            'status': 'success'
-        }), 200
-        
+        with open(filepath, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        return jsonify(data), 200
     except Exception as e:
-        return jsonify({
-            'error': str(e),
-            'status': 'error'
-        }), 500
+        return jsonify({'error': str(e)}), 500
 
 
 if __name__ == '__main__':
