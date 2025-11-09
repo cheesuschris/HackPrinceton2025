@@ -411,6 +411,9 @@ async function handleProductData(response, url, fromGemini = false) {
         alternativesData[`link${idx}C0Score`] = link.c0_score;
       });
       
+      // Add C0Score to productData for cart functionality
+      productData.C0Score = carbonScore;
+      
       await showAlternatives(productData, alternativesData);
       
       // Save to storage for persistence
@@ -496,10 +499,9 @@ async function showAlternatives(originalProduct, analysis) {
   infoDiv.innerHTML = html;
   
   alternatives.forEach((alt) => {
-    const btn = infoDiv.querySelector(`.add-to-cart-btn[data-index="${alt.index}"]`);
+    const btn = document.querySelector(`.add-to-cart-btn[data-index="${alt.index}"]`);
     if (btn) {
       btn.addEventListener('click', async (e) => {
-        e.preventDefault();
         await addToCarbon0Cart(alt, originalProduct, e.target);
       });
     }
@@ -507,14 +509,13 @@ async function showAlternatives(originalProduct, analysis) {
 }
 
 async function addToCarbon0Cart(alternative, originalProduct, btn) {
-  if (!btn) {
-    return;
-  }
-  
   btn.disabled = true;
   btn.textContent = 'Adding...';
   
   try {
+    // Get the original product's C0Score from the analysis data
+    const originalC0Score = originalProduct.C0Score || null;
+    
     const cartData = {
       alternative: {
         url: alternative.link,
@@ -527,7 +528,8 @@ async function addToCarbon0Cart(alternative, originalProduct, btn) {
         price: originalProduct.price,
         url: originalProduct.url,
         image: originalProduct.image,
-        platform: originalProduct.platform
+        platform: originalProduct.platform,
+        C0Score: originalC0Score  // Include original C0Score for carbon savings calculation
       }
     };
     

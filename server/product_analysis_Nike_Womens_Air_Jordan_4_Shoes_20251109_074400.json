@@ -1,0 +1,22 @@
+{
+  "product_name": "Nike Women's Air Jordan 4 Shoes",
+  "timestamp": "2025-11-09T07:44:00.954547",
+  "results": [
+    {
+      "search_result": {
+        "url": "https://www.nike.com/w/womens-jordan-4-shoes-3go3gz5e1x6zy7ok",
+        "title": "Womens Jordan 4 Shoes",
+        "snippet": "Womens Jordan 4 Shoes. Mid Top. Pick Up Today. Gender Men Women Unisex. Color Brown. Shop by Price Over $150. Size 5 5.5 6 6.5 7 7.5 8 8.5 9 9.5 10",
+        "screenshot_count": 5
+      },
+      "gemini_analysis": {
+        "success": true,
+        "analysis": "Okay, here is a detailed analysis of the provided images focusing on the \"Womens Jordan 4 Shoes\" product information.\n\n**BASIC INFORMATION:**\n\n1.  **Product Name/Title:** Womens Jordan 4 Shoes\n2.  **Brand Name:** Jordan (part of Nike)\n3.  **Price:** $220 (for the \"Air Jordan 4 Retro\" model)\n4.  **Rating:** Not Visible\n5.  **Availability/Stock Status:** I am unable to verify its stock due to the page experiencing an error.\n\n**PRODUCT DETAILS:**\n\n6.  **Materials:**\n    *   Appears to have suede or nubuck (based on visual texture)\n    *   Rubber (for the outsole)\n    *   Mesh (on the sides of the shoe)\n    *   Possibly synthetic materials (for structure and overlays)\n7.  **Dimensions/Size:** Not visible, but standard women's shoe sizing applies.\n8.  **Key Features:**\n    *   Retro design\n    *   Visible Air cushioning in the sole\n    *   Lace closure\n    *   Supportive overlays.\n9.  **Product Description:** Based on the limited information, these are Women's Jordan 4 Retro shoes, part of the iconic Jordan line, blending classic style with modern comfort and performance features.\n10. **Color Options:** A beige color is displayed.\n\n**REVIEWS & FEEDBACK:**\n\n11. **Pros:** N/A\n12. **Cons:** N/A\n13. **Customer Reviews Summary:** No customer reviews available.\n\n**ADDITIONAL INFORMATION:**\n\n14. **Shipping Information:** Not visible.\n15. **Seller Information:** Nike.\n16. **Warranty/Return Policy:** Not visible in the image, but typically Nike offers a standard return policy for unworn items.\n17. **Related Products or Accessories:** Related Categories:\n    *   Women's Watches\n    *   Women's Short Sleeve Shirts\n    *   Women's Fleece Jackets\n    *   Women's Puffer Jackets\n    *   Black Jordan 1 Shoes\n    *   Jordan 1 Red Shoes\n    *   Girls Nike Air Shoes\n    *   Jordan Basketball Balls\n    *   Jordan 1 Orange Shoes\n    *   White Jordan 1 Shoes\n18. **Any other relevant details visible in the images:**\n\n*  \"Give Sport Shop All Gifts\" is visible at the top of the page.\n* The site is experiencing an error, with a pop-up showing a message related to a request issue and recommending refreshing the page.\n\nLet me know if you need any further details!\n",
+        "images_analyzed": 5,
+        "model": "gemini-2.0-flash-exp"
+      },
+      "success": true
+    }
+  ],
+  "total_results": 1
+}

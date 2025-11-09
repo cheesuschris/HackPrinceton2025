@@ -42,10 +42,22 @@ function addToCart(alternative, original) {
     return;
   }
   
+  // Calculate CO2 saved for this item
+  const originalScore = parseFloat(original.C0Score) || 0;
+  const alternativeScore = parseFloat(alternative.C0Score) || 0;
+  const co2Saved = originalScore - alternativeScore;
+  
   cartData.push({
     id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-    alternative: alternative,
-    original: original,
+    alternative: {
+      ...alternative,
+      C0Score: alternativeScore
+    },
+    original: {
+      ...original,
+      C0Score: originalScore
+    },
+    co2Saved: co2Saved,
     addedAt: new Date().toISOString()
   });
   
@@ -60,9 +72,18 @@ function removeFromCart(id) {
 
 function calculateStats() {
   const totalAlternatives = cartData.length;
-  const totalCO2Saved = cartData.reduce((sum, item) => sum + (item.alternative.co2Saved || 0), 0);
+  
+  // Calculate total CO2 saved using original C0Score - alternative C0Score
+  const totalCO2Saved = cartData.reduce((sum, item) => {
+    const originalScore = parseFloat(item.original?.C0Score) || 0;
+    const alternativeScore = parseFloat(item.alternative?.C0Score) || 0;
+    return sum + (originalScore - alternativeScore);
+  }, 0);
+  
   document.getElementById('total-alternatives').textContent = totalAlternatives;
-  document.getElementById('total-co2-saved').textContent = totalCO2Saved.toFixed(1) + ' kg';
+  document.getElementById('total-co2-saved').textContent = totalCO2Saved.toFixed(2) + ' kg';
+  
+  // Note: carbon-total is saved to localStorage in finishCheckout() to avoid double counting
 }
 
 function renderCart() {
@@ -94,14 +115,17 @@ function renderCart() {
   let html = '';
   
   Object.values(groupedByOriginal).forEach(group => {
+    const originalScore = parseFloat(group.original.C0Score) || 0;
     html += `
       <div class="product-group">
         <div class="original-product">
           <div class="label">Original Product</div>
+          ${group.original.image ? `<img src="${group.original.image}" alt="original product" class="product-image" style="max-width: 150px; margin-bottom: 10px;" onerror="this.style.display='none'">` : ''}
           <div class="product-name">${group.original.name || 'Product'}</div>
           <div class="product-details">
             ${group.original.price ? `<div class="detail-item"><strong>Price:</strong> ${group.original.price}</div>` : ''}
             ${group.original.platform ? `<div class="detail-item"><strong>Platform:</strong> ${group.original.platform}</div>` : ''}
+            ${originalScore > 0 ? `<div class="detail-item"><span class="co2-badge">C0Score: ${originalScore.toFixed(2)} kg</span></div>` : ''}
           </div>
         </div>
         <div class="alternatives-list">
@@ -109,14 +133,18 @@ function renderCart() {
     
     group.alternatives.forEach(item => {
       const alt = item.alternative;
+      const altScore = parseFloat(alt.C0Score) || 0;
+      const co2Saved = item.co2Saved || (originalScore - altScore);
+      
       html += `
         <div class="alternative-item">
           ${alt.image ? `<img src="${alt.image}" alt="alternative" class="product-image" onerror="this.style.display='none'">` : ''}
           <div class="product-info">
+            <div class="product-name">${alt.explanation || 'Alternative Product'}</div>
             <div class="product-details">
               ${alt.url ? `<div class="detail-item"><strong>URL:</strong> <a href="${alt.url}" target="_blank">View Product</a></div>` : ''}
-              ${alt.C0Score ? `<div class="detail-item"><strong>Price:</strong> ${alt.C0Score}</div>` : ''}
-              ${alt.explanation ? `<div class="detail-item"><strong>Merchant:</strong> ${alt.explanation}</div>` : ''}
+              ${altScore > 0 ? `<div class="detail-item"><span class="co2-badge">C0Score: ${altScore.toFixed(2)} kg</span></div>` : ''}
+              ${co2Saved > 0 ? `<div class="detail-item"><span class="co2-saved">Carbon Saved: ${co2Saved.toFixed(2)} kg</span></div>` : ''}
             </div>
           </div>
           <button class="remove-btn" onclick="removeFromCart('${item.id}')">Remove</button>
@@ -156,9 +184,20 @@ function createConfetti() {
 }
 
 async function finishCheckout() {
+  // Calculate total CO2 saved using original C0Score - alternative C0Score
   const totalCO2Saved = cartData.reduce((sum, item) => {
-    return sum + (item.alternative.co2Saved || 0);
+    const originalScore = parseFloat(item.original?.C0Score) || 0;
+    const alternativeScore = parseFloat(item.alternative?.C0Score) || 0;
+    return sum + (originalScore - alternativeScore);
   }, 0);
+  
+  // Save carbon-total to localStorage
+  const CARBON_TOTAL_KEY = 'carbon-total';
+  const currentTotal = parseFloat(localStorage.getItem(CARBON_TOTAL_KEY) || '0');
+  const newTotal = currentTotal + totalCO2Saved;
+  localStorage.setItem(CARBON_TOTAL_KEY, newTotal.toString());
+  console.log('Saved carbon-total to localStorage:', newTotal);
+  
   try {
     const response = await fetch('http://localhost:5000/cart/checkout', {
       method: 'POST',

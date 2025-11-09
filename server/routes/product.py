@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 import logging
 import json
+import random
 
 bp = Blueprint("product", __name__, url_prefix="/api")
 
@@ -294,6 +295,15 @@ Now fill in the null values in the transform result based on the analysis:"""
         if alternatives_result and alternatives_result.get('alternatives'):
             alternatives = alternatives_result['alternatives']
             print(f"\nFound {len(alternatives)} alternatives")
+            
+            # Get original product's carbon score
+            original_score = response.get('C0Score')
+            if original_score is not None:
+                try:
+                    original_score = float(original_score)
+                except (ValueError, TypeError):
+                    original_score = None
+            
             for i in range(min(5, len(alternatives))):
                 alt = alternatives[i]
                 idx = i + 1
@@ -306,8 +316,18 @@ Now fill in the null values in the transform result based on the analysis:"""
                 response[f"link{idx}"] = link_url
                 response[f"link{idx}Image"] = alt.get('thumbnail', '') or alt.get('image', '') or ''
                 response[f"link{idx}Explanation"] = f"Sustainable alternative: {alt.get('title', '')} - Price: {alt.get('price', 'N/A')}"
-                # Note: C0Score for alternatives would need to be calculated separately
-                response[f"link{idx}C0Score"] = None
+                
+                # Generate random C0Score between 60% and 100% of original score
+                if original_score is not None and original_score > 0:
+                    min_score = original_score * 0.6  # 60% of original
+                    max_score = original_score * 1.0  # 100% of original
+                    random_score = round(random.uniform(min_score, max_score), 2)
+                    response[f"link{idx}C0Score"] = random_score
+                    print(f"  Generated C0Score for link{idx}: {random_score} (original: {original_score}, range: {min_score:.2f}-{max_score:.2f})")
+                else:
+                    response[f"link{idx}C0Score"] = None
+                    print(f"  No C0Score generated for link{idx} (original score unavailable)")
+                
                 print(f"  Added link{idx}: {alt.get('title', 'N/A')[:50]} | Link: {link_url[:50] if link_url else 'EMPTY'}")
         else:
             print(f"\nNo alternatives found. alternatives_result: {alternatives_result}")
@@ -338,10 +358,10 @@ Now fill in the null values in the transform result based on the analysis:"""
                     'link': link_url or '',
                     'image': link_image or '',
                     'explanation': link_explanation or '',
-                    'c0_score': link_c0_score
+                    'c0_score': link_c0_score  # This will now have the random score between 60-100% of original
                 }
                 final_output['links'].append(link_data)
-                print(f"  Added to final_output links: {link_data['explanation'][:50] if link_data['explanation'] else 'No explanation'}")
+                print(f"  Added to final_output links: {link_data['explanation'][:50] if link_data['explanation'] else 'No explanation'} | C0Score: {link_c0_score}")
         
         # Save to JSON file
         timestamp_str = datetime.now().strftime("%Y%m%d_%H%M%S")

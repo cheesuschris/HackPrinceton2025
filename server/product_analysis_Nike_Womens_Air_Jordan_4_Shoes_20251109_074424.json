@@ -1,0 +1,22 @@
+{
+  "product_name": "Nike Women's Air Jordan 4 Shoes",
+  "timestamp": "2025-11-09T07:44:24.174315",
+  "results": [
+    {
+      "search_result": {
+        "url": "https://www.nike.com/w/womens-jordan-4-shoes-3go3gz5e1x6zy7ok",
+        "title": "Womens Jordan 4 Shoes",
+        "snippet": "Womens Jordan 4 Shoes. Mid Top. Pick Up Today. Gender Men Women Unisex. Color Brown. Shop by Price Over $150. Size 5 5.5 6 6.5 7 7.5 8 8.5 9 9.5 10",
+        "screenshot_count": 5
+      },
+      "gemini_analysis": {
+        "success": true,
+        "analysis": "Here's a detailed analysis of the product information extracted from the provided images:\n\n**BASIC INFORMATION:**\n\n1.  **Product Name/Title:**  Air Jordan 4 Retro Women's Shoes\n2.  **Brand Name:** Jordan (Nike)\n3.  **Price:** $220\n4.  **Rating:** Not visible\n5.  **Availability/Stock Status:** Not explicitly stated, but the presence of a \"View Bag\" button suggests the product might be available.  However, an error message is present, indicating a possible issue with availability.\n\n**PRODUCT DETAILS:**\n\n6.  **Materials:** Likely suede or nubuck leather (based on appearance), rubber sole, mesh accents (based on appearance).\n7.  **Dimensions/Size:**  Not available from images, but assumed to be women's shoe sizes.\n8.  **Key Features:**\n    *   Retro design\n    *   Women's specific fit/design\n9.  **Product Description:** No full description is present, however the shoe is a retro model of the Air Jordan 4, redesigned for women.\n10. **Color Options:** One color is visible: a sandy brown/tan color with a white sole.\n\n**REVIEWS & FEEDBACK:**\n\n11. **Pros:** None visible.\n12. **Cons:** None visible.\n13. **Customer Reviews Summary:** Not visible.\n\n**ADDITIONAL INFORMATION:**\n\n14. **Shipping Information:** Not visible.\n15. **Seller Information:** Nike is the seller.\n16. **Warranty/Return Policy:** Not visible.\n17. **Related Products or Accessories:** Related categories include \"Women's watches\", \"Women's Short Sleeve Shirts\", \"Women's Fleece Jackets\", \"Women's Puffer Jackets\", \"Black Jordan 1 Shoes\", \"Jordan 1 Red Shoes\", \"Girls Nike Air Shoes\", \"Jordan Basketball Balls\", \"Jordan 1 Orange Shoes\", \"White Jordan 1 Shoes\".\n18. **Any other relevant details visible in the images:** An error message is present, stating \"We had an issue with your request. If you continue experiencing issues, try refreshing the page\" with a code, suggesting the product page might be experiencing technical difficulties.\n",
+        "images_analyzed": 5,
+        "model": "gemini-2.0-flash-exp"
+      },
+      "success": true
+    }
+  ],
+  "total_results": 1
+}

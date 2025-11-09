@@ -1,0 +1,22 @@
+{
+  "product_name": "Nike Women's Air Jordan 4 Shoes",
+  "timestamp": "2025-11-09T07:53:11.090666",
+  "results": [
+    {
+      "search_result": {
+        "url": "https://www.nike.com/w/womens-jordan-4-shoes-3go3gz5e1x6zy7ok",
+        "title": "Womens Jordan 4 Shoes",
+        "snippet": "Womens Jordan 4 Shoes. Mid Top. Pick Up Today. Gender Men Women Unisex. Color Brown. Shop by Price Over $150. Size 5 5.5 6 6.5 7 7.5 8 8.5 9 9.5 10",
+        "screenshot_count": 5
+      },
+      "gemini_analysis": {
+        "success": true,
+        "analysis": "Okay, here's the product information extracted from the images you provided:\n\n**BASIC INFORMATION:**\n\n1.  Product Name/Title: Womens Jordan 4 Shoes\n2.  Brand Name: Jordan\n3.  Price: $220\n4.  Rating: N/A\n5.  Availability/Stock Status:  The image shows an \"Error\" message, suggesting there might be an issue loading the product information. The error message has a \"View Bag\" button.\n\n**PRODUCT DETAILS:**\n\n6.  Materials:  Suede (based on the look of the shoe in the image), likely rubber sole.\n7.  Dimensions/Size: N/A\n8.  Key Features: Appears to be the \"Retro\" style of the Air Jordan 4\n9.  Product Description: Air Jordan 4 Retro Women's Shoes\n10. Color Options:  A light-brownish tan\n\n**REVIEWS & FEEDBACK:**\n\n11. Pros: N/A\n12. Cons: N/A\n13. Customer Reviews Summary: N/A\n\n**ADDITIONAL INFORMATION:**\n\n14. Shipping Information: N/A\n15. Seller Information: Nike (via website)\n16. Warranty/Return Policy: N/A\n17. Related Products or Accessories: Not in the specified images, but several related category links are shown (e.g., Women's Watches, Women's Short Sleeve Shirts, Women's Fleece Jackets, Women's Puffer Jackets, Black Jordan 1 Shoes, Jordan 1 Red Shoes, Girls Nike Air Shoes, Jordan Basketball Balls, Jordan 1 Orange Shoes, White Jordan 1 Shoes)\n18. Any other relevant details visible in the images:\n    *   The listing seems to be for \"Just In\" items.\n    *   The error message suggests a potential technical issue with the website.\n",
+        "images_analyzed": 5,
+        "model": "gemini-2.0-flash-exp"
+      },
+      "success": true
+    }
+  ],
+  "total_results": 1
+}

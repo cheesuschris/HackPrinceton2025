@@ -30,11 +30,8 @@ app.register_blueprint(product_bp)
 
 @app.route('/')
 def home():
-    """Home route"""
-    return jsonify({
-        'message': 'Welcome to the Carbon0 Flask server',
-        'status': 'running'
-    })
+    """Home route - serve index.html"""
+    return send_from_directory('templates', 'index.html')
 
 @app.route('/cart/checkout', methods=['POST'])
 def cart_checkout():
