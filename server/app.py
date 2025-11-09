@@ -13,10 +13,6 @@ mongo = PyMongo(app)
 
 CORS(app)
 
-# Basic logging configuration for development
-logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
-
-
 # Register blueprints
 app.register_blueprint(product_bp)
 
@@ -134,4 +130,6 @@ def receive_product():
 
 
 if __name__ == '__main__':
+    if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+            init_db()
     app.run(debug=True, host='0.0.0.0', port=5000)

@@ -1,0 +1,112 @@
+[
+  {
+    "sku": "TS-001",
+    "name": "Organic Cotton T-Shirt",
+    "category": "Clothing",
+    "brand": "GreenThread",
+    "price": 24.99,
+    "web_url": "https://example.com/products/TS-001",
+    "image_url": "https://example.com/images/TS-001.jpg",
+    "cf_value": 5.5,
+    "cf_detail": "material: 3.8 (organic cotton cultivation & processing), manufacturing: 0.9, transport: 0.4, packaging: 0.4; sources: DEFRA 2023, Ecoinvent v3.9. Unit: kg CO2e per shirt."
+  },
+  {
+    "sku": "PJ-002",
+    "name": "Lightweight Polyester Jacket",
+    "category": "Clothing",
+    "brand": "AeroWear",
+    "price": 89.0,
+    "web_url": "https://example.com/products/PJ-002",
+    "image_url": "https://example.com/images/PJ-002.jpg",
+    "cf_value": 9.8,
+    "cf_detail": "material: 6.4 (polyester fibres & yarn), manufacturing: 1.5, transport (sea + last-mile): 0.9, packaging: 1.0; sources: DEFRA 2023, Ecoinvent v3.9. Unit: kg CO2e per jacket."
+  },
+  {
+    "sku": "JN-003",
+    "name": "Denim Jeans",
+    "category": "Clothing",
+    "brand": "BlueRoot",
+    "price": 69.0,
+    "web_url": "https://example.com/products/JN-003",
+    "image_url": "https://example.com/images/JN-003.jpg",
+    "cf_value": 21.5,
+    "cf_detail": "material: 15.0 (cotton cultivation & denim processing including water and dyeing), manufacturing & finishing: 3.0, transport: 1.0, packaging & retail: 2.5; sources: peer-reviewed LCA averages, DEFRA 2023. Unit: kg CO2e per pair."
+  },
+  {
+    "sku": "RS-004",
+    "name": "Performance Running Shoes",
+    "category": "Footwear",
+    "brand": "StridePro",
+    "price": 120.0,
+    "web_url": "https://example.com/products/RS-004",
+    "image_url": "https://example.com/images/RS-004.jpg",
+    "cf_value": 13.8,
+    "cf_detail": "materials: 8.5 (synthetic uppers, EVA midsoles, rubber outsoles), manufacturing: 2.5, transport: 1.2, packaging: 1.6; sources: Ecoinvent v3.9, industry LCAs. Unit: kg CO2e per pair."
+  },
+  {
+    "sku": "LW-005",
+    "name": "Genuine Leather Wallet",
+    "category": "Accessories",
+    "brand": "HeritageCraft",
+    "price": 45.0,
+    "web_url": "https://example.com/products/LW-005",
+    "image_url": "https://example.com/images/LW-005.jpg",
+    "cf_value": 8.6,
+    "cf_detail": "material: 6.0 (leather production & tanning), manufacturing: 1.2, transport: 0.4, packaging: 1.0; sources: literature values for small leather goods, Ecoinvent. Unit: kg CO2e per wallet."
+  },
+  {
+    "sku": "CM-006",
+    "name": "Ceramic Coffee Mug (12oz)",
+    "category": "Home",
+    "brand": "MugWorks",
+    "price": 12.5,
+    "web_url": "https://example.com/products/CM-006",
+    "image_url": "https://example.com/images/CM-006.jpg",
+    "cf_value": 2.1,
+    "cf_detail": "material & firing: 1.4, manufacturing & glazing: 0.4, transport: 0.15, packaging: 0.15; sources: product-level LCA estimates, DEFRA aggregated factors. Unit: kg CO2e per mug."
+  },
+  {
+    "sku": "TB-007",
+    "name": "Reusable Cotton Tote Bag",
+    "category": "Accessories",
+    "brand": "EverydayCarry",
+    "price": 9.99,
+    "web_url": "https://example.com/products/TB-007",
+    "image_url": "https://example.com/images/TB-007.jpg",
+    "cf_value": 7.8,
+    "cf_detail": "material (heavyweight cotton): 5.6, manufacturing: 1.0, transport: 0.6, packaging: 0.6; sources: lifecycle studies for cotton bags, DEFRA. Unit: kg CO2e per bag."
+  },
+  {
+    "sku": "SC-008",
+    "name": "Polycarbonate Smartphone Case",
+    "category": "Electronics Accessories",
+    "brand": "CaseGuard",
+    "price": 17.5,
+    "web_url": "https://example.com/products/SC-008",
+    "image_url": "https://example.com/images/SC-008.jpg",
+    "cf_value": 0.25,
+    "cf_detail": "material (plastic molding): 0.15, manufacturing & assembly: 0.05, transport & packaging: 0.05; sources: injection molding LCA estimates, Ecoinvent. Unit: kg CO2e per case."
+  },
+  {
+    "sku": "BP-009",
+    "name": "Urban Nylon Backpack (20L)",
+    "category": "Bags",
+    "brand": "TrailCity",
+    "price": 79.0,
+    "web_url": "https://example.com/products/BP-009",
+    "image_url": "https://example.com/images/BP-009.jpg",
+    "cf_value": 9.2,
+    "cf_detail": "materials (nylon fabric, webbing, foam): 5.8, manufacturing: 1.8, transport: 0.9, packaging: 0.7; sources: Ecoinvent, industry LCAs for textile bags. Unit: kg CO2e per backpack."
+  },
+  {
+    "sku": "WB-010",
+    "name": "Stainless Steel Water Bottle (500ml)",
+    "category": "Home",
+    "brand": "PureSip",
+    "price": 25.0,
+    "web_url": "https://example.com/products/WB-010",
+    "image_url": "https://example.com/images/WB-010.jpg",
+    "cf_value": 3.6,
+    "cf_detail": "material (stainless steel production): 2.2, manufacturing: 0.7, transport: 0.4, packaging: 0.3; sources: metal goods LCA datasets, Ecoinvent. Unit: kg CO2e per bottle."
+  }
+]
